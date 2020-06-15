@@ -14,12 +14,14 @@ class OverlayImageLayerOptions extends LayerOptions {
 
 class OverlayImage {
   final LatLngBounds bounds;
+  final double bearing;
   final ImageProvider imageProvider;
   final double opacity;
   final bool gaplessPlayback;
 
   OverlayImage({
     this.bounds,
+    this.bearing,
     this.imageProvider,
     this.opacity = 1.0,
     this.gaplessPlayback = false,
@@ -65,13 +67,16 @@ class OverlayImageLayer extends StatelessWidget {
       top: upperLeftPixel.y.toDouble(),
       width: (bottomRightPixel.x - upperLeftPixel.x).toDouble(),
       height: (bottomRightPixel.y - upperLeftPixel.y).toDouble(),
-      child: Image(
-        image: overlayImage.imageProvider,
-        fit: BoxFit.fill,
-        color: Color.fromRGBO(255, 255, 255, overlayImage.opacity),
-        colorBlendMode: BlendMode.modulate,
-        gaplessPlayback: overlayImage.gaplessPlayback,
-      ),
+      child: RotationTransition(
+        turns: AlwaysStoppedAnimation(overlayImage.bearing / 360.0),
+        child: Image(
+          image: overlayImage.imageProvider,
+          fit: BoxFit.fill,
+          color: Color.fromRGBO(255, 255, 255, overlayImage.opacity),
+          colorBlendMode: BlendMode.modulate,
+          gaplessPlayback: overlayImage.gaplessPlayback,
+        ),
+      )
     );
   }
 }
